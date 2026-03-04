@@ -29,10 +29,12 @@ pipeline {
      }
 post {
     success {
-      githubNotify context: 'jenkins/build', status: 'SUCCESS'
+      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'success', description: 'Build OK'
     }
     failure {
-      githubNotify context: 'jenkins/build', status: 'FAILURE'
+      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'failure', description: 'Build FAILED'
     }
-  }
-}
+    unstable {
+      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'failure', description: 'Build UNSTABLE'
+    }
+  }}
