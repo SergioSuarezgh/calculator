@@ -2,10 +2,9 @@ pipeline {
   agent any
 
   environment {
-    // Cambia esto:
-    GITHUB_OWNER = 'TU_ORG_O_USUARIO'
-    GITHUB_REPO  = 'TU_REPO'
-  }
+  GITHUB_OWNER = 'SergioSuarezgh'
+  GITHUB_REPO  = 'calculator'
+}
 
   stages {
     stage('Compile') {
