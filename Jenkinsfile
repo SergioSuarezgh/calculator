@@ -1,6 +1,12 @@
 pipeline {
   agent any
 
+  environment {
+    // Cambia esto:
+    GITHUB_OWNER = 'TU_ORG_O_USUARIO'
+    GITHUB_REPO  = 'TU_REPO'
+  }
+
   stages {
     stage('Compile') {
       steps {
@@ -42,17 +48,11 @@ pipeline {
   }
 
   post {
-    success {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'SUCCESS'
-    }
-    failure {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'FAILURE'
-    }
-    unstable {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'ERROR'
-    }
-    aborted {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'ERROR'
+    always {
+      // Publica un check en GitHub con el resultado del build
+      publishChecks name: 'jenkins/ci',
+        conclusion: currentBuild.currentResult,
+        detailsURL: env.BUILD_URL
     }
   }
 }
