@@ -1,6 +1,5 @@
 package com.sergio.calculator;
 import org.junit.Test;
-import main.java.com.sergio.calculator.Calculator;
 import static org.junit.Assert.assertEquals;
 
 public class CalculatorTest {
