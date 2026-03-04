@@ -28,13 +28,16 @@ pipeline {
 
      }
 post {
-    success {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'success', description: 'Build OK'
-    }
-    failure {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'failure', description: 'Build FAILED'
-    }
-    unstable {
-      setGitHubPullRequestStatus context: 'jenkins/ci', state: 'failure', description: 'Build UNSTABLE'
-    }
-  }}
+  success {
+    setGitHubPullRequestStatus context: 'jenkins/ci', state: 'SUCCESS'
+  }
+  failure {
+    setGitHubPullRequestStatus context: 'jenkins/ci', state: 'FAILURE'
+  }
+  unstable {
+    setGitHubPullRequestStatus context: 'jenkins/ci', state: 'ERROR'
+  }
+  aborted {
+    setGitHubPullRequestStatus context: 'jenkins/ci', state: 'ERROR'
+  }
+}  }}
