@@ -2,35 +2,33 @@ pipeline {
   agent any
 
   environment {
-  GITHUB_OWNER = 'SergioSuarezgh'
-  GITHUB_REPO  = 'calculator'
-}
+    GITHUB_OWNER = 'SergioSuarezgh'
+    GITHUB_REPO  = 'calculator'
+    IMAGE_NAME   = 'sergiosuarezgh/calculator'
+  }
 
   stages {
+    stage('Prepare') {
+      steps {
+        sh 'chmod +x gradlew'
+      }
+    }
+
     stage('Compile') {
       steps {
-        sh '''
-          chmod +x gradlew
-          ./gradlew compileJava
-        '''
+        sh './gradlew compileJava'
       }
     }
 
     stage('Unit test') {
       steps {
-        sh '''
-          chmod +x gradlew
-          ./gradlew test
-        '''
+        sh './gradlew test'
       }
     }
 
     stage('Code coverage') {
       steps {
-        sh '''
-          chmod +x gradlew
-          ./gradlew jacocoTestReport
-        '''
+        sh './gradlew jacocoTestReport'
 
         publishHTML(target: [
           reportDir: 'build/reports/jacoco/test/html',
@@ -38,20 +36,29 @@ pipeline {
           reportName: 'JaCoCo Report'
         ])
 
-        sh '''
-          chmod +x gradlew
-          ./gradlew jacocoTestCoverageVerification
-        '''
+        sh './gradlew jacocoTestCoverageVerification'
+      }
+    }
+
+    stage('Package') {
+      steps {
+        sh './gradlew build'
+      }
+    }
+
+    stage('Docker build') {
+      steps {
+        sh 'docker --version'
+        sh "docker build -t ${IMAGE_NAME} ."
       }
     }
   }
 
   post {
     always {
-      // Publica un check en GitHub con el resultado del build
-      publishChecks name: 'jenkins/ci',
-        conclusion: currentBuild.currentResult,
-        detailsURL: env.BUILD_URL
+      script {
+        echo "Build result: ${currentBuild.currentResult}"
+      }
     }
   }
 }
